@@ -6,6 +6,35 @@
 #define MAX_KEY_LENGTH 1024
 #define INITIAL_KEY_COUNT 10
 
+char *read_public_key_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to open public key file");
+        return NULL;
+    }
+
+    char buffer[MAX_KEY_LENGTH];
+    if (!fgets(buffer, sizeof(buffer), file)) {
+        perror("Failed to read public key line");
+        fclose(file);
+        return NULL;
+    }
+
+    fclose(file);
+
+    // Remove newline if present
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    // Duplicate the string to return
+    char *key = strdup(buffer);
+    if (!key) {
+        perror("Memory allocation failed");
+        return NULL;
+    }
+
+    return key;
+}
+
 int read_authorized_keys(const char *filename, KeyList *key_list) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -29,6 +58,7 @@ int read_authorized_keys(const char *filename, KeyList *key_list) {
 
         if (strlen(buffer) == 0) continue; // if line empty, keep going
 
+        // realloc more capacity if more space needed
         if (key_list->count >= capacity) {
             capacity *= 2;
             char **temp = realloc(key_list->keys, capacity * sizeof(char *));

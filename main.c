@@ -1,5 +1,26 @@
 #include "authorized_keys.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+static bool is_authorized(KeyList* keys, const char* pubfile) {
+    char *key = read_public_key_file(pubfile);
+    if (key) {
+        printf("Read public key: %s\n", key);
+    } else {
+        fprintf(stderr, "Failed to read key from %s\n", pubfile);
+        return false;
+    }
+    if (is_authorized_key(keys, key)) {
+        printf("The good key is authorized.\n");
+        free(key);
+        return true;
+    } else {
+        printf("The good key is NOT authorized.\n");
+        free(key);
+        return false;
+    }
+}
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -18,18 +39,13 @@ int main(int argc, char *argv[]) {
         printf("[%zu] %s\n", i + 1, keys.keys[i]);
     }
 
-    const char *good_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKm+gtptToHUWVIVd52pDPXcw4oDnno5ZrCkYIv79lUr jesse@jessemoore.dev";
-    if (is_authorized_key(&keys, good_key)) {
-        printf("The good key is authorized.\n");
-    } else {
-        printf("The good key is NOT authorized.\n");
+    if(!is_authorized(&keys, "good.pub")) {
+        free_key_list(&keys);
+        return 1;
     }
-
-    const char *bad_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKm+gtptToHUWVIVd52pDPXcw4oDnno5ZrCkYIv79lUr BOGUS@jessemoore.dev";
-    if (is_authorized_key(&keys, bad_key)) {
-        printf("The bad key IS authorized.\n");
-    } else {
-        printf("The bad key is not authorized.\n");
+    if(is_authorized(&keys, "bad.pub")) {
+        free_key_list(&keys);
+        return 1;
     }
 
     free_key_list(&keys);

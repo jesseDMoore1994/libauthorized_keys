@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+// Reads a single key from a .pub file.
+// Returns a newly allocated string (caller must free), or NULL on failure.
+char *read_public_key_file(const char *filename);
+
 // Structure to hold the list of keys
 typedef struct {
     char **keys;
