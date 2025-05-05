@@ -92,10 +92,6 @@ bool is_authorized_key(const KeyList *key_list, const char *key) {
 
     printf("keys: %d\n", key_list->count);
     for (size_t i = 0; i < key_list->count; ++i) {
-        printf("cmp\n");
-        printf("%s\n", key_list->keys[i]);
-        printf("vs\n");
-        printf("%s\n", key);
         if (strcmp(key_list->keys[i], key) == 0) {
             printf("key authorized!\n");
             return true; // Key found
