@@ -49,5 +49,20 @@ int main(int argc, char *argv[]) {
     }
 
     free_key_list(&keys);
+
+    char *key = read_public_key_file("good.pub");
+    if(!is_authorized_key_in_file(argv[1], key)) {
+        printf("good.pub is NOT authorized in %s!", argv[1]);
+        return 1;
+    }
+    free(key);
+
+    key = read_public_key_file("bad.pub");
+    if(is_authorized_key_in_file(argv[1], key)) {
+        printf("bad.pub IS authorized in %s!", argv[1]);
+        return 1;
+    }
+    free(key);
+
     return 0;
 }

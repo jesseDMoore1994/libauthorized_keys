@@ -11,8 +11,8 @@
   ] (system: let pkgs = import nixpkgs {
         inherit system;
       };
-      strlib = pkgs.stdenv.mkDerivation {
-        pname = "authorized_keys";
+      libauthorized_keys = pkgs.stdenv.mkDerivation {
+        pname = "libauthorized_keys";
         version = "0.1.0";
         src = ./.;
         nativeBuildInputs = [
@@ -28,7 +28,7 @@
       };
   in rec {
     defaultApp = inputs.utils.lib.mkApp { drv = defaultPackage; };
-    defaultPackage = strlib;
+    defaultPackage = libauthorized_keys;
     devShell = pkgs.mkShell {
       buildInputs = [ pkgs.valgrind pkgs.clang pkgs.inotify-tools ];
     };

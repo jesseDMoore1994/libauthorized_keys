@@ -86,16 +86,39 @@ int read_authorized_keys(const char *filename, KeyList *key_list) {
 
 bool is_authorized_key(const KeyList *key_list, const char *key) {
     if (!key_list || !key || !key_list->keys) {
+        printf("Key or Key list null!\n");
         return false;
     }
 
+    printf("keys: %d\n", key_list->count);
     for (size_t i = 0; i < key_list->count; ++i) {
+        printf("cmp\n");
+        printf("%s\n", key_list->keys[i]);
+        printf("vs\n");
+        printf("%s\n", key);
         if (strcmp(key_list->keys[i], key) == 0) {
+            printf("key authorized!\n");
             return true; // Key found
         }
     }
 
+    printf("key not authorized!\n");
     return false; // Not found
+}
+
+bool is_authorized_key_in_file(const char *filename, const char* key) {
+    KeyList keys;
+    bool res;
+
+    if (read_authorized_keys(filename, &keys) != 0) {
+        fprintf(stderr, "Failed to read authorized keys.\n");
+        return 1;
+    }
+
+    res = is_authorized_key(&keys, key);
+
+    free_key_list(&keys);
+    return res;
 }
 
 void free_key_list(KeyList *key_list) {

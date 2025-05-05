@@ -21,6 +21,9 @@ int read_authorized_keys(const char *filename, KeyList *key_list);
 // Checks if a specific key is in the list.
 bool is_authorized_key(const KeyList *key_list, const char *key);
 
+// Checks if a specific key is in the list.
+bool is_authorized_key_in_file(const char *filename, const char *key);
+
 // Frees memory allocated for the KeyList
 void free_key_list(KeyList *key_list);
 
